@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#E8382D">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>png dataco — ARIA Campaign Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#080808;
+  --card:#111827;
+  --card2:#0E1B30;
+  --red:#E8382D;
+  --red2:#FF4B3E;
+  --amber:#F5A623;
+  --white:#FFFFFF;
+  --grey:#9CA3AF;
+  --border:rgba(255,255,255,0.07);
+  --surface:rgba(255,255,255,0.03);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ── NETWORK BG ── */
+#net{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.25;pointer-events:none;}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:relative;z-index:10;
+  background:rgba(8,8,8,0.96);
+  border-bottom:1px solid rgba(232,56,45,0.3);
+  padding:0 16px;
+  flex-shrink:0;
+  backdrop-filter:blur(10px);
+}
+
+/* Logo */
+.logo-row{display:flex;align-items:center;padding:12px 0 10px;border-bottom:1px solid var(--border);}
+.logo-wrap{display:flex;align-items:center;gap:2px;}
+.dot-sphere{
+  width:38px;height:38px;
+  background:radial-gradient(circle at 35% 35%, rgba(245,166,35,0.9), rgba(232,56,45,0.7));
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin-right:8px;
+  position:relative;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.dot-sphere::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px);
+  background-size:5px 5px, 5px 5px;
+  background-position:0 0, 2.5px 2.5px;
+  border-radius:50%;
+}
+.wordmark{font-family:'Outfit',sans-serif;line-height:1;}
+.wm-png{font-size:10px;font-weight:400;color:var(--grey);letter-spacing:1px;display:block;margin-bottom:-2px;}
+.wm-main{font-size:22px;font-weight:800;display:flex;align-items:baseline;gap:0;}
+.wm-data{color:var(--white);}
+.wm-co{color:var(--red);}
+.logo-sep{width:1px;height:28px;background:rgba(255,255,255,0.1);margin:0 12px;}
+.platform-name{font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--amber);}
+.platform-sub{font-size:9px;color:var(--grey);font-family:'JetBrains Mono',monospace;letter-spacing:1px;margin-top:1px;}
+.logo-right{margin-left:auto;display:flex;align-items:center;gap:7px;}
+.badge{
+  border-radius:4px;
+  padding:3px 9px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.badge-live{
+  background:rgba(245,166,35,0.12);
+  border:1px solid rgba(245,166,35,0.3);
+  color:var(--amber);
+  display:flex;align-items:center;gap:5px;
+}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);animation:blink 1.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.badge-iso{background:rgba(232,56,45,0.1);border:1px solid rgba(232,56,45,0.25);color:rgba(232,56,45,0.8);}
+
+/* Pills */
+.ctx-bar{padding:9px 0 0;}
+.ctx-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;letter-spacing:2px;
+  color:rgba(255,255,255,0.3);
+  text-transform:uppercase;margin-bottom:5px;
+}
+.pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.pill{
+  padding:4px 11px;
+  border-radius:4px;
+  font-size:11px;font-weight:500;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.025);
+  color:rgba(255,255,255,0.45);
+  transition:all 0.13s;user-select:none;
+}
+.pill:hover{border-color:rgba(232,56,45,0.4);color:var(--white);background:rgba(232,56,45,0.07);}
+.pill.on{
+  background:var(--red);border-color:var(--red);
+  color:#fff;font-weight:600;
+  box-shadow:0 2px 10px rgba(232,56,45,0.35);
+}
+.pill.on.amb{
+  background:var(--amber);border-color:var(--amber);
+  box-shadow:0 2px 10px rgba(245,166,35,0.3);
+  color:#000;
+}
+
+/* Tabs */
+.tabs{display:flex;border-top:1px solid var(--border);margin-top:2px;}
+.tab{
+  flex:1;padding:8px;background:none;border:none;
+  border-bottom:2px solid transparent;
+  color:rgba(255,255,255,0.35);
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  transition:all 0.13s;
+}
+.tab.on{color:var(--red);border-bottom-color:var(--red);}
+.tab:hover:not(.on){color:var(--white);}
+
+/* ── MAIN ── */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative;z-index:10;}
+
+/* Chat */
+.chat-panel{
+  flex:1;overflow-y:auto;
+  padding:14px 16px 0;
+  display:flex;flex-direction:column;gap:12px;
+}
+.chat-panel::-webkit-scrollbar{width:2px;}
+.chat-panel::-webkit-scrollbar-thumb{background:rgba(232,56,45,0.4);border-radius:2px;}
+
+.msg{display:flex;gap:9px;animation:fi 0.22s ease-out;}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.u{flex-direction:row-reverse;}
+
+.av{
+  width:30px;height:30px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;flex-shrink:0;margin-top:2px;
+  font-family:'Outfit',sans-serif;
+}
+.av.bot{background:linear-gradient(135deg,var(--red),var(--amber));color:#fff;box-shadow:0 2px 8px rgba(232,56,45,0.35);}
+.av.usr{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--grey);font-size:14px;}
+
+.bub{
+  max-width:80%;padding:10px 14px;
+  font-size:13.5px;line-height:1.7;
+  white-space:pre-wrap;word-break:break-word;
+}
+.msg.u .bub{
+  background:var(--red);
+  border-radius:10px 10px 3px 10px;color:#fff;
+  box-shadow:0 2px 12px rgba(232,56,45,0.25);
+}
+.msg.b .bub{
+  background:var(--card2);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px 10px 10px 3px;color:var(--white);
+}
+
+/* Typing */
+.tw{display:flex;gap:9px;}
+.typing{
+  display:flex;align-items:center;gap:5px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:10px 10px 10px 3px;
+  padding:11px 14px;
+}
+.typing span{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--red);
+  animation:bo 1.2s ease-in-out infinite;
+}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bo{0%,60%,100%{transform:translateY(0);opacity:0.25}30%{transform:translateY(-6px);opacity:1}}
+
+/* Input */
+.input-area{padding:10px 16px 14px;border-top:1px solid var(--border);flex-shrink:0;}
+.chips{display:flex;gap:5px;margin-bottom:7px;min-height:2px;flex-wrap:wrap;}
+.chip{
+  padding:2px 9px;border-radius:3px;
+  font-size:10px;font-weight:600;
+  font-family:'JetBrains Mono',monospace;
+}
+.chip.s{background:rgba(232,56,45,0.15);border:1px solid rgba(232,56,45,0.3);color:var(--red2);}
+.chip.a{background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.28);color:var(--amber);}
+.irow{display:flex;gap:7px;}
+textarea{
+  flex:1;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:6px;
+  padding:10px 13px;color:var(--white);
+  font-family:'Outfit',sans-serif;font-size:13.5px;
+  resize:none;outline:none;height:42px;line-height:1.4;
+  transition:border-color 0.13s;
+}
+textarea:focus{border-color:rgba(232,56,45,0.5);}
+textarea::placeholder{color:rgba(255,255,255,0.25);}
+.sbtn{
+  width:42px;height:42px;border-radius:6px;
+  background:var(--red);
+  border:none;color:#fff;cursor:pointer;
+  transition:all 0.13s;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(232,56,45,0.3);
+}
+.sbtn:hover{background:var(--red2);transform:translateY(-1px);}
+.sbtn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+.fnote{
+  text-align:center;font-family:'JetBrains Mono',monospace;
+  font-size:8.5px;color:rgba(255,255,255,0.12);
+  letter-spacing:1.5px;margin-top:6px;text-transform:uppercase;
+}
+/* tagline */
+.tagline-footer{
+  color:var(--amber);font-style:italic;font-weight:600;font-size:8.5px;
+  text-align:center;letter-spacing:0.5px;margin-top:2px;
+}
+
+/* ── SIDE PANELS ── */
+.side{flex:1;overflow-y:auto;padding:14px 16px;display:none;flex-direction:column;gap:10px;}
+.side.on{display:flex;}
+.slabel{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:2px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:3px;}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.stat{background:var(--card2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:9px 6px;text-align:center;}
+.stn{font-family:'Outfit',sans-serif;font-size:18px;font-weight:900;color:var(--amber);line-height:1;margin-bottom:2px;}
+.stl{font-size:8.5px;color:var(--grey);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;line-height:1.3;}
+
+/* Action grid */
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.ac{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;padding:13px 11px;cursor:pointer;
+  transition:all 0.13s;
+}
+.ac:hover{background:rgba(232,56,45,0.08);border-color:rgba(232,56,45,0.35);transform:translateY(-1px);}
+.aci{font-size:20px;margin-bottom:7px;}
+.act{font-size:12.5px;font-weight:700;color:var(--white);margin-bottom:3px;}
+.acs{font-size:9.5px;color:var(--grey);font-family:'JetBrains Mono',monospace;}
+
+/* Info card */
+.icard{border-radius:10px;padding:14px;}
+.icard.dc{background:var(--card2);border:1px solid rgba(232,56,45,0.18);}
+.icard.ab{background:rgba(10,10,10,0.8);border:1px solid rgba(245,166,35,0.2);}
+.ititle{font-family:'Outfit',sans-serif;font-weight:800;font-size:13px;margin-bottom:9px;}
+.icard.dc .ititle{color:var(--red);}
+.icard.ab .ititle{color:var(--amber);}
+.ir{display:flex;gap:7px;margin-bottom:5px;font-size:12px;align-items:flex-start;}
+.ik{color:rgba(255,255,255,0.35);font-family:'JetBrains Mono',monospace;font-size:9.5px;min-width:70px;padding-top:1px;flex-shrink:0;}
+.iv{color:rgba(255,255,255,0.85);line-height:1.5;}
+.idiv{height:1px;background:var(--border);margin:9px 0;}
+.itag{font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;font-style:italic;color:var(--amber);text-align:center;}
+</style>
+</head>
+<body>
+
+<!-- Animated network background -->
+<canvas id="net"></canvas>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-row">
+    <div class="logo-wrap">
+      <div class="dot-sphere"></div>
+      <div class="wordmark">
+        <span class="wm-png">png</span>
+        <div class="wm-main"><span class="wm-data">data</span><span class="wm-co">co</span></div>
+      </div>
+    </div>
+    <div class="logo-sep"></div>
+    <div>
+      <div class="platform-name">ARIA Campaign Intelligence</div>
+      <div class="platform-sub">Internal Digital Platform &nbsp;·&nbsp; NTN</div>
+    </div>
+    <div class="logo-right">
+      <div class="badge badge-iso">ISO 27001</div>
+      <div class="badge badge-live"><div class="live-dot"></div>LIVE</div>
+    </div>
+  </div>
+
+  <div class="ctx-bar">
+    <div class="ctx-label">Service Line</div>
+    <div class="pills">
+      <div class="pill" data-t="s" data-v="Wholesale Internet">🌐 Wholesale Internet</div>
+      <div class="pill" data-t="s" data-v="ICT & Cloud">☁️ ICT &amp; Cloud</div>
+      <div class="pill" data-t="s" data-v="Data Centre">🖥️ Data Centre</div>
+      <div class="pill" data-t="s" data-v="IEPL / P2P">🔗 IEPL / P2P</div>
+      <div class="pill" data-t="s" data-v="LEO / Satellite">🛰️ LEO / Satellite</div>
+    </div>
+    <div class="ctx-label">Audience</div>
+    <div class="pills">
+      <div class="pill" data-t="a" data-v="Government">🏛️ Government</div>
+      <div class="pill" data-t="a" data-v="Enterprise">🏢 Enterprise</div>
+      <div class="pill" data-t="a" data-v="Wholesale Partners">🤝 Wholesale</div>
+      <div class="pill" data-t="a" data-v="Institutions">🎓 Institutions</div>
+      <div class="pill" data-t="a" data-v="Households">🏠 Households</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="chat">⚡ Campaign AI</button>
+    <button class="tab" data-tab="quick">✦ Quick Launch</button>
+    <button class="tab" data-tab="about">◎ About ARIA</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CHAT -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="msg b">
+      <div class="av bot">DC</div>
+      <div class="bub">👋 Welcome to ARIA — png dataco's Campaign Intelligence Platform.
+
+I generate on-brand campaign content across all DataCo service lines and audience segments in real time.
+
+What I can build for you:
+• Social media posts — Facebook, LinkedIn, X
+• Press releases and media briefs
+• Email campaigns (EDMs)
+• Radio and TV advertisement scripts
+• 90-day integrated campaign strategies
+• KPI frameworks and performance dashboards
+
+Select your service line and audience above, or hit ✦ Quick Launch for one-click deliverables.
+
+<span style="color:#F5A623;font-style:italic;font-weight:600;">Yes, You'll Be Covered!</span></div>
+    </div>
+  </div>
+
+  <!-- QUICK LAUNCH -->
+  <div class="side" id="quickPanel">
+    <div class="stats">
+      <div class="stat"><div class="stn">7K+</div><div class="stl">KM FIBRE</div></div>
+      <div class="stat"><div class="stn">20</div><div class="stl">PROVINCES</div></div>
+      <div class="stat"><div class="stn">15</div><div class="stl">CABLE STATIONS</div></div>
+    </div>
+    <div class="slabel">One-click campaign deliverables</div>
+    <div class="agrid">
+      <div class="ac" data-p="Generate 3 compelling Facebook posts and 2 LinkedIn posts for PNG DataCo. Bold, on-brand, PNG-relevant. Brand tagline: Yes, You'll Be Covered! Mission: connecting Papua New Guinea to the digital world.">
+        <div class="aci">📱</div><div class="act">Social Posts</div><div class="acs">Facebook + LinkedIn →</div>
+      </div>
+      <div class="ac" data-p="Design a complete 90-day integrated campaign strategy for PNG DataCo across all service lines — Wholesale Internet, ICT & Cloud, Data Centre, IEPL/P2P, LEO/Satellite. Include phases, channels, KPIs, and milestones.">
+        <div class="aci">🗺️</div><div class="act">Campaign Strategy</div><div class="acs">90-day roadmap →</div>
+      </div>
+      <div class="ac" data-p="Write a professional press release for PNG DataCo announcing expanded digital infrastructure services across Papua New Guinea. Reference 7,000km fibre, 20 provinces, 15 submarine cable landing stations, ISO 27001 certification, and Kumul submarine cable.">
+        <div class="aci">📰</div><div class="act">Press Release</div><div class="acs">Media-ready copy →</div>
+      </div>
+      <div class="ac" data-p="Write a full EDM email campaign for PNG DataCo targeting enterprise decision-makers about ICT & Cloud and Data Centre services. Include subject line, preview text, compelling body, and CTA. End with: Yes, You'll Be Covered!">
+        <div class="aci">✉️</div><div class="act">Email Campaign</div><div class="acs">Full EDM →</div>
+      </div>
+      <div class="ac" data-p="Write a punchy 30-second radio advertisement script for PNG DataCo promoting connectivity across Papua New Guinea. Authentic PNG voice — reference provinces, opportunity, the future. End with tagline: Yes, You'll Be Covered!">
+        <div class="aci">📻</div><div class="act">Radio Script</div><div class="acs">30-second spot →</div>
+      </div>
+      <div class="ac" data-p="Design a comprehensive KPI framework for PNG DataCo's digital awareness campaign. Include metrics by channel, audience targets, reporting cadence, optimisation triggers, and monthly review format.">
+        <div class="aci">📊</div><div class="act">KPI Framework</div><div class="acs">Metrics + targets →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="side" id="aboutPanel">
+    <div class="icard ab">
+      <div class="ititle">◎ About ARIA</div>
+      <div class="ir"><span class="ik">PLATFORM</span><span class="iv">Automated Response &amp; Intelligence for Awareness — DataCo's AI campaign engine</span></div>
+      <div class="ir"><span class="ik">FUNCTION</span><span class="iv">Generates all campaign content — social, email, press, radio, strategy, KPIs — across all 5 service lines and 5 audiences in real time</span></div>
+      <div class="ir"><span class="ik">OWNER</span><span class="iv">PNG DataCo Limited — this platform is DataCo's permanent internal asset</span></div>
+      <div class="ir"><span class="ik">STANDARD</span><span class="iv">Genesis Creation Blueprint v4.9 — brand-compliant and fully auditable outputs</span></div>
+      <div class="idiv"></div>
+      <div class="itag">"Yes, You'll Be Covered!"</div>
+    </div>
+    <div class="icard dc">
+      <div class="ititle">✦ PNG DataCo — At a Glance</div>
+      <div class="ir"><span class="ik">ENTITY</span><span class="iv">PNG DataCo Limited — state-owned enterprise, mandated 2014 by GoPNG</span></div>
+      <div class="ir"><span class="ik">MANDATE</span><span class="iv">Build, own and operate Papua New Guinea's National Transmission Network (NTN)</span></div>
+      <div class="ir"><span class="ik">NETWORK</span><span class="iv">7,000+ km fibre, 3 international PoPs, 5 Internet Gateways, 15 submarine cable landing stations, 20 provinces</span></div>
+      <div class="ir"><span class="ik">VALUES</span><span class="iv">TACET — Teamwork, Accountability, Customer-focused, Employee Engagement, Trust</span></div>
+      <div class="ir"><span class="ik">ISO CERT</span><span class="iv">ISO/IEC 27001:2022 — CERT NO: IS27-2022-0130</span></div>
+      <div class="ir"><span class="ik">CONTACT</span><span class="iv">commercial@pngdataco.com | (675) 313 3900</span></div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-area" id="inputArea">
+    <div class="chips" id="chips"></div>
+    <div class="irow">
+      <textarea id="inp" placeholder="Ask ARIA to create DataCo campaign content…" rows="1"></textarea>
+      <button class="sbtn" id="btn" onclick="send()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="fnote">PNG DataCo ARIA — AI-Powered Campaign Intelligence — ISO 27001:2022</div>
+    <div class="tagline-footer">"Yes, You'll Be Covered!"</div>
+  </div>
+
+</div>
+
+<script>
+/* ── NETWORK CANVAS ── */
+(function(){
+  const c=document.getElementById('net');
+  const ctx=c.getContext('2d');
+  let W,H,nodes=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;init();}
+  function init(){
+    nodes=[];
+    const n=Math.floor((W*H)/18000);
+    for(let i=0;i<n;i++) nodes.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*2+1});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+    // lines
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.strokeStyle=`rgba(232,56,45,${(1-d/120)*0.4})`;
+          ctx.lineWidth=0.5;
+          ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();
+        }
+      }
+    }
+    // dots
+    nodes.forEach(n=>{
+      ctx.fillStyle='rgba(245,166,35,0.6)';
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+
+/* ── APP ── */
+const SYS=`You are ARIA — PNG DataCo's internal AI Campaign Intelligence Platform.
+
+PNG DataCo (png dataco) is Papua New Guinea's state-owned national digital infrastructure provider, mandated to build, own and operate the National Transmission Network (NTN). DataCo manages 7,000+ km fibre, 20 provinces, 15 submarine cable landing stations, 3 international PoPs, 5 Internet Gateway Nodes. ISO/IEC 27001:2022 certified (CERT NO: IS27-2022-0130).
+
+Core values: TACET — Teamwork, Accountability, Customer-focused, Employee Engagement, Trust.
+Brand tagline: "Yes, You'll Be Covered!"
+Visual identity: Black background, red (#E8382D) and amber (#F5A623) accents.
+
+Service lines:
+1. WHOLESALE INTERNET — High-capacity national bandwidth for carriers, ISPs, enterprises
+2. ICT & CLOUD — Oracle Cloud, enterprise cloud, managed ICT solutions
+3. DATA CENTRE — Secure ISO-certified co-location, redundant power, cooling, 24/7 monitoring
+4. IEPL / P2P — Secure dedicated international and domestic point-to-point connectivity
+5. LEO / SATELLITE — Low Earth Orbit and VSAT for remote and rural Papua New Guinea
+
+Audience segments: Government (GoPNG, statutory bodies, provinces), Enterprise (private sector, banks, resources, retail), Wholesale Partners (licensed ISPs and telcos), Institutions (universities, hospitals, schools, NGOs), Households (urban, peri-urban, rural families).
+
+Brand voice: bold, confident, nationally-minded, human, hopeful. DataCo is a proud PNG institution — connecting every Papua New Guinean to opportunity, education, and economic participation. Every piece of communication should feel like it was made in PNG, for PNG.
+
+End every response with the brand tagline: "Yes, You'll Be Covered!" and a "▸ NEXT STEP" recommendation for DataCo's campaign team.`;
+
+let svc=null,aud=null,hist=[],busy=false;
+
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    const t=p.dataset.t,v=p.dataset.v;
+    document.querySelectorAll(`.pill[data-t="${t}"]`).forEach(x=>x.classList.remove('on','amb'));
+    if(t==='s'){svc=svc===v?null:v;if(svc)p.classList.add('on');}
+    else{aud=aud===v?null:v;if(aud)p.classList.add('on','amb');}
+    chips();
+  });
+});
+
+function chips(){
+  const c=document.getElementById('chips');
+  c.innerHTML='';
+  if(svc)c.innerHTML+=`<span class="chip s">▪ ${svc}</span>`;
+  if(aud)c.innerHTML+=`<span class="chip a">▸ ${aud}</span>`;
+}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    tab.classList.add('on');
+    const w=tab.dataset.tab;
+    document.getElementById('chatPanel').style.display=w==='chat'?'flex':'none';
+    document.getElementById('quickPanel').classList.toggle('on',w==='quick');
+    document.getElementById('aboutPanel').classList.toggle('on',w==='about');
+    document.getElementById('inputArea').style.display=w==='chat'?'block':'none';
+  });
+});
+
+document.querySelectorAll('.ac').forEach(card=>{
+  card.addEventListener('click',()=>{
+    let p=card.dataset.p;
+    if(svc)p=`[Service Line: ${svc}] ${p}`;
+    if(aud)p=`[Target Audience: ${aud}] ${p}`;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    document.querySelector('.tab[data-tab="chat"]').classList.add('on');
+    document.getElementById('chatPanel').style.display='flex';
+    document.getElementById('quickPanel').classList.remove('on');
+    document.getElementById('aboutPanel').classList.remove('on');
+    document.getElementById('inputArea').style.display='block';
+    send(p);
+  });
+});
+
+const ta=document.getElementById('inp');
+ta.addEventListener('input',()=>{ta.style.height='42px';ta.style.height=Math.min(ta.scrollHeight,110)+'px';});
+ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function addMsg(r,t){
+  const p=document.getElementById('chatPanel');
+  const d=document.createElement('div');
+  d.className=`msg ${r==='user'?'u':'b'}`;
+  d.innerHTML=`<div class="av ${r==='user'?'usr':'bot'}">${r==='user'?'👤':'DC'}</div><div class="bub">${esc(t)}</div>`;
+  p.appendChild(d);p.scrollTop=p.scrollHeight;
+}
+function showT(){
+  const p=document.getElementById('chatPanel');
+  const d=document.createElement('div');
+  d.id='typ';d.className='tw';
+  d.innerHTML=`<div class="av bot">DC</div><div class="typing"><span></span><span></span><span></span></div>`;
+  p.appendChild(d);p.scrollTop=p.scrollHeight;
+}
+function hideT(){const t=document.getElementById('typ');if(t)t.remove();}
+
+async function send(ov){
+  const btn=document.getElementById('btn');
+  const raw=ov||ta.value.trim();
+  if(!raw||busy)return;
+  busy=true;btn.disabled=true;
+  let ctx=raw;
+  if(!ov){if(svc)ctx=`[Service: ${svc}] ${ctx}`;if(aud)ctx=`[Audience: ${aud}] ${ctx}`;}
+  addMsg('user',raw);
+  hist.push({role:'user',content:ctx});
+  ta.value='';ta.style.height='42px';
+  showT();
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:hist})
+    });
+    const data=await r.json();
+    const reply=data.content?.find(b=>b.type==='text')?.text||'No response.';
+    hist.push({role:'assistant',content:reply});
+    hideT();addMsg('bot',reply);
+  }catch(e){hideT();addMsg('bot','⚠️ Connection error. Please try again.');}
+  busy=false;btn.disabled=false;
+}
+</script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js")
+      .then(() => console.log("ARIA SW registered"))
+      .catch(e => console.log("SW error:", e));
+  });
+}
+</script>
+</body>
+</html>
